@@ -1,0 +1,57 @@
+{{define "content"}}
+<section class="py-4">
+    <div class="d-flex align-items-center mb-3">
+        <h1 class="h3 mb-0">🎼 Compose Music</h1>
+    </div>
+
+    <form method="post" action="/web/compose" class="card p-4 shadow-sm">
+        <input type="hidden" name="csrf_token" value="{{ .CSRFToken }}">
+
+        <div class="mb-4">
+            <h5 class="text-secondary border-bottom pb-2">1. Input Source</h5>
+            <label class="form-label" for="url">URL (Web Context)</label>
+            <input class="form-control mb-3" id="url" name="url" type="url" placeholder="https://example.com/article">
+
+            <label class="form-label" for="text">Concept / Draft Lyrics</label>
+            <textarea class="form-control mb-3" id="text" name="text" rows="4" placeholder="Describe the vibe or paste lyrics draft..."></textarea>
+
+            <label class="form-label" for="image">Reference Image URL</label>
+            <input class="form-control mb-3" id="image" name="image" type="url" placeholder="https://example.com/art.png">
+        </div>
+
+        <div class="mb-4">
+            <h5 class="text-secondary border-bottom pb-2">2. Music Concept (Prompt Mode)</h5>
+            <label class="form-label" for="compose_mode">Concept Recipe</label>
+            <select class="form-select" id="compose_mode" name="compose_mode">
+                {{ range .Data.ComposeModes }}
+                <option value="{{ . }}" {{ if eq . "default" }}selected{{ end }}>{{ . }}</option>
+                {{ end }}
+            </select>
+        </div>
+
+        <div class="mb-4">
+            <h5 class="text-secondary border-bottom pb-2">3. AI Orchestration</h5>
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label class="form-label" for="lyrics_model">Lyricist</label>
+                    <input class="form-control" id="lyrics_model" name="lyrics_model" type="text" placeholder="gemini-3-flash">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label" for="compose_model">Composer</label>
+                    <input class="form-control" id="compose_model" name="compose_model" type="text" placeholder="lyria-3">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label" for="seed">Seed</label>
+                    <input class="form-control" id="seed" name="seed" type="number" step="1" placeholder="Random" title="同じ音色を再現する場合に入力（空欄でランダム）">
+                </div>
+            </div>
+        </div>
+
+        <div class="d-grid">
+            <button class="btn btn-primary btn-lg" type="submit">
+                🚀 Queue Music Job
+            </button>
+        </div>
+    </form>
+</section>
+{{end}}

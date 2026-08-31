@@ -1,0 +1,326 @@
+{{define "content"}}
+<style>
+    .history-playing {
+        background-color: var(--bs-primary-bg-subtle);
+        border-left: 4px solid var(--bs-primary);
+    }
+
+    .history-playing h5 {
+        color: var(--bs-primary);
+    }
+
+    .meta-container {
+        line-height: 1.6;
+    }
+
+    .mood-badge {
+        max-width: 200px;
+        display: inline-block;
+        vertical-align: middle;
+    }
+    @media (max-width: 576px) {
+        .mood-badge {
+            max-width: 120px;
+        }
+    }
+</style>
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <h2 class="mb-0"><i class="bi bi-clock-history me-2"></i>楽曲生成履歴</h2>
+        <div class="d-flex align-items-center gap-2 flex-wrap justify-content-end">
+            {{if .Data}}
+            <button id="playlist-toggle-btn" class="btn btn-outline-primary btn-sm d-inline-flex align-items-center gap-1" onclick="togglePlaylist(event)">
+                <i class="bi bi-play-fill" id="playlist-toggle-icon"></i><span id="playlist-toggle-label">一括再生</span>
+            </button>
+            {{end}}
+            <a href="/" class="btn btn-primary btn-sm">
+                <i class="bi bi-plus-lg me-1"></i>新規作成
+            </a>
+        </div>
+    </div>
+
+    <div class="list-group shadow-sm mt-3">
+        {{range .Data}}
+        <div class="list-group-item list-group-item-action p-3 position-relative" id="history-item-{{.JobID}}">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+
+                <!-- 左側：情報エリア -->
+                <div class="flex-grow-1 mb-3 mb-md-0 me-md-3">
+                    <a href="/web/history/{{.JobID}}" class="text-decoration-none text-dark d-block mb-1 stretched-link">
+                        <h5 class="mb-1 fw-bold text-truncate" style="max-width: 100%;">{{.Title}}</h5>
+                    </a>
+
+                    <div class="text-muted small meta-container">
+                        {{if .CreatedAt}}
+                        <div class="mb-1 text-secondary">
+                            <i class="bi bi-calendar3 me-1"></i>{{.CreatedAt}}
+                        </div>
+                        {{end}}
+
+                        <div class="d-flex flex-wrap gap-2 align-items-center">
+                            {{if .Tempo}}
+                            <span class="badge text-bg-light border text-secondary">
+                                <i class="bi bi-speedometer2 me-1"></i>{{.Tempo}} BPM
+                            </span>
+                            {{end}}
+
+                            {{if .ComposeMode}}
+                            <span class="badge text-bg-secondary opacity-75">{{.ComposeMode}}</span>
+                            {{end}}
+
+                            {{if .Mood}}
+                            <span class="badge text-bg-light border text-truncate mood-badge text-secondary" title="{{.Mood}}">
+                                <i class="bi bi-stars me-1"></i>{{.Mood}}
+                            </span>
+                            {{end}}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 右側：操作エリア（再生・詳細・削除） -->
+                <div class="d-flex align-items-center justify-content-between justify-content-md-end gap-2 position-relative z-3">
+                    <div class="d-flex align-items-center gap-2">
+                        <audio id="audio-{{.JobID}}" src="/web/audio/{{.JobID}}" preload="metadata" data-job-id="{{.JobID}}"></audio>
+                        <button class="btn btn-primary rounded-circle shadow-sm audio-toggle-btn"
+                                id="btn-{{.JobID}}"
+                                data-job-id="{{.JobID}}"
+                                onclick="toggleAudio(this.dataset.jobId, event)"
+                                style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">
+                            <i class="bi bi-play-fill fs-4" id="icon-{{.JobID}}"></i>
+                        </button>
+                    </div>
+
+                    <div class="d-flex gap-1">
+                        <a href="/web/history/{{.JobID}}" class="btn btn-outline-secondary btn-sm d-inline-flex align-items-center px-3">
+                            詳細
+                        </a>
+                        <button class="btn btn-outline-danger btn-sm px-2"
+                                onclick="deleteHistory('{{.JobID}}', event)"
+                                title="削除">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{else}}
+        <div class="alert alert-light border text-center py-5">
+            <i class="bi bi-music-note-list display-4 text-muted mb-3 d-block"></i>
+            <p class="mb-0">履歴がまだありません。新しい楽曲を創造しましょう！</p>
+        </div>
+        {{end}}
+    </div>
+</div>
+
+<!-- ページ全体で使えるようにCSRFトークンを埋め込み -->
+<input type="hidden" id="csrf_token" value="{{.CSRFToken}}">
+
+<script>
+    /**
+     * 指定されたジョブIDの履歴を削除します。
+     */
+    async function deleteHistory(jobID, event) {
+        if (event) event.stopPropagation();
+
+        if (!confirm('この楽曲履歴を削除するのだ？（元には戻せないのだ！）')) {
+            return;
+        }
+
+        // 埋め込まれたCSRFトークンを取得
+        const csrfToken = document.getElementById('csrf_token').value;
+
+        try {
+            const response = await fetch(`/web/history/${jobID}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-Token': csrfToken
+                }
+            });
+
+            if (response.ok) {
+                const item = document.getElementById('btn-' + jobID)?.closest('.list-group-item');
+                if (item) {
+                    item.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                    item.style.opacity = '0';
+                    item.style.transform = 'translateX(20px)';
+
+                    setTimeout(() => {
+                        item.remove();
+                        if (document.querySelectorAll('.list-group-item').length === 0) {
+                            window.location.reload();
+                        }
+                    }, 300);
+                }
+            } else {
+                const errorText = await response.text();
+                alert('削除に失敗したのだ: ' + errorText);
+            }
+        } catch (error) {
+            console.error('Delete Error:', error);
+            alert('通信エラーが発生したのだ。');
+        }
+    }
+
+    /**
+     * オーディオの再生・一時停止を切り替え
+     */
+    let playlistActive = false;
+    let playlistPaused = false;
+    let playlistIndex = -1;
+
+    function getAudioElements() {
+        return Array.from(document.querySelectorAll('audio[data-job-id]'));
+    }
+
+    function getJobID(audio) {
+        return audio.dataset.jobId;
+    }
+
+    function setAudioIcon(jobID, playing) {
+        const icon = document.getElementById('icon-' + jobID);
+        if (icon) {
+            icon.className = playing ? 'bi bi-pause-fill' : 'bi bi-play-fill';
+        }
+    }
+
+    function setPlayingItem(jobID) {
+        document.querySelectorAll('.history-playing').forEach(item => {
+            item.classList.remove('history-playing');
+            item.removeAttribute('aria-current');
+        });
+
+        if (!jobID) return;
+
+        const item = document.getElementById('history-item-' + jobID);
+        if (item) {
+            item.classList.add('history-playing');
+            item.setAttribute('aria-current', 'true');
+        }
+    }
+
+    function setPlaylistButton() {
+        const icon = document.getElementById('playlist-toggle-icon');
+        const label = document.getElementById('playlist-toggle-label');
+        if (icon) {
+            icon.className = playlistActive ? 'bi bi-pause-fill' : 'bi bi-play-fill';
+        }
+        if (label) {
+            label.textContent = playlistActive ? '一時停止' : (playlistPaused ? '再開' : '一括再生');
+        }
+    }
+
+    function pauseOtherAudios(activeJobID) {
+        getAudioElements().forEach(el => {
+            const jobID = getJobID(el);
+            if (jobID !== activeJobID) {
+                el.pause();
+                setAudioIcon(jobID, false);
+            }
+        });
+    }
+
+    function playAudio(jobID, continuePlaylist) {
+        const audio = document.getElementById('audio-' + jobID);
+        if (!audio) return;
+
+        pauseOtherAudios(jobID);
+
+        audio.onended = () => {
+            setAudioIcon(jobID, false);
+            setPlayingItem(null);
+            if (playlistActive && continuePlaylist) {
+                playNextPlaylistAudio();
+            }
+        };
+
+        audio.play().then(() => {
+            setAudioIcon(jobID, true);
+            setPlayingItem(jobID);
+            setPlaylistButton();
+        }).catch(err => {
+            console.error("再生に失敗しました:", err);
+            if (playlistActive && continuePlaylist) {
+                console.warn("この曲をスキップして次へ進みます...");
+                playNextPlaylistAudio();
+            } else {
+                playlistActive = false;
+                setPlaylistButton();
+                alert("楽曲のストリーミングに失敗したのだ。");
+            }
+        });
+    }
+
+    function playNextPlaylistAudio() {
+        const audios = getAudioElements();
+        playlistIndex += 1;
+
+        if (playlistIndex >= audios.length) {
+            playlistActive = false;
+            playlistPaused = false;
+            playlistIndex = -1;
+            setPlaylistButton();
+            return;
+        }
+
+        playAudio(getJobID(audios[playlistIndex]), true);
+    }
+
+    function togglePlaylist(event) {
+        if (event) event.stopPropagation();
+
+        const audios = getAudioElements();
+        if (audios.length === 0) return;
+
+        if (playlistActive) {
+            playlistActive = false;
+            playlistPaused = true;
+            audios.forEach(audio => {
+                audio.pause();
+                setAudioIcon(getJobID(audio), false);
+            });
+            setPlayingItem(null);
+            setPlaylistButton();
+            return;
+        }
+
+        if (playlistPaused && playlistIndex >= 0 && playlistIndex < audios.length) {
+            playlistActive = true;
+            playlistPaused = false;
+            setPlaylistButton();
+            playAudio(getJobID(audios[playlistIndex]), true);
+            return;
+        }
+
+        playlistActive = true;
+        playlistPaused = false;
+        playlistIndex = -1;
+        setPlaylistButton();
+        playNextPlaylistAudio();
+    }
+
+    /**
+     * オーディオの再生・一時停止を切り替え
+     */
+    function toggleAudio(jobID, event) {
+        if (event) event.stopPropagation();
+
+        // 個別再生が開始されたため、一括再生（プレイリスト）モードは解除する
+        playlistActive = false;
+        playlistPaused = false;
+        playlistIndex = -1;
+        setPlaylistButton();
+
+        const audio = document.getElementById('audio-' + jobID);
+        if (!audio) return;
+
+        if (audio.paused) {
+            playAudio(jobID, false);
+        } else {
+            audio.pause();
+            setAudioIcon(jobID, false);
+            setPlayingItem(null);
+        }
+    }
+</script>
+{{end}}

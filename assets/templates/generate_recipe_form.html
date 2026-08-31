@@ -1,0 +1,37 @@
+{{define "content"}}
+<section class="py-4">
+    <div class="d-flex align-items-center mb-3">
+        <h1 class="h3 mb-0">Generate from MusicRecipe</h1>
+    </div>
+
+    <form method="post" action="/web/generate-from-recipe" class="card p-4 shadow-sm">
+        <input type="hidden" name="csrf_token" value="{{ .CSRFToken }}">
+
+        <div class="mb-4">
+            <h5 class="text-secondary border-bottom pb-2">1. MusicRecipe JSON</h5>
+            <label class="form-label" for="recipe_json">MusicRecipe JSON</label>
+            <textarea class="form-control font-monospace" id="recipe_json" name="recipe_json" rows="16" placeholder='{"title":"...","theme":"...","mood":"...","tempo":128,"instruments":["..."],"sections":[{"name":"Intro","duration_seconds":16,"prompt":"..."}]}' required></textarea>
+        </div>
+
+        <div class="mb-4">
+            <h5 class="text-secondary border-bottom pb-2">2. Audio Settings</h5>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label" for="recipe_compose_model">Lyria Model</label>
+                    <input class="form-control" id="recipe_compose_model" name="compose_model" type="text" placeholder="lyria-3-pro-preview">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label" for="recipe_seed">Seed</label>
+                    <input class="form-control" id="recipe_seed" name="seed" type="number" step="1" placeholder="Recipe seed or random">
+                </div>
+            </div>
+        </div>
+
+        <div class="d-grid">
+            <button class="btn btn-primary btn-lg" type="submit">
+                <i class="bi bi-soundwave me-2"></i>Queue Generate / Publish Job
+            </button>
+        </div>
+    </form>
+</section>
+{{end}}
