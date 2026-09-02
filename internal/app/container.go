@@ -27,7 +27,7 @@ type Container struct {
 	// Business Logic
 	Pipeline domain.Pipeline
 	// External Adapters
-	HTTPClient httpkit.Requester
+	HTTPClient httpkit.Poster
 	Notifier   domain.Notifier
 	// Data Access
 	MusicRepo    domain.MusicRepository

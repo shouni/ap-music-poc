@@ -48,7 +48,7 @@ func BuildContainer(ctx context.Context, cfg *config.Config) (container *app.Con
 	}
 	resources = append(resources, enqueuer)
 
-	httpClient := httpkit.New(config.DefaultHTTPTimeout)
+	httpClient := httpkit.New()
 	slack, err := adapters.NewSlackAdapter(httpClient, cfg.SlackWebhookURL, cfg.ServiceURL)
 	if err != nil {
 		return nil, err
