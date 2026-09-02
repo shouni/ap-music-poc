@@ -8,12 +8,12 @@ require (
 	github.com/jellydator/ttlcache/v3 v3.4.1
 	github.com/shouni/gcp-kit v1.14.1
 	github.com/shouni/go-gemini-client v1.21.4
-	github.com/shouni/go-http-kit v1.10.0
-	github.com/shouni/go-notify v1.3.1
+	github.com/shouni/go-http-kit v1.11.0
+	github.com/shouni/go-notify v1.4.0
 	github.com/shouni/go-prompt-kit v1.7.0
 	github.com/shouni/go-remote-io v1.11.1
 	github.com/shouni/go-utils v1.7.1
-	github.com/shouni/go-web-reader v1.5.0
+	github.com/shouni/go-web-reader v1.5.1
 	github.com/shouni/netarmor v1.4.0
 	github.com/stretchr/testify v1.12.1
 	golang.org/x/sync v0.22.0

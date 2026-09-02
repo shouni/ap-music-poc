@@ -12,11 +12,6 @@ const (
 	DefaultGeminiModel = "gemini-3-flash-preview"
 	// DefaultLyriaModel は、音声生成フェーズで使用するデフォルトのLyriaモデルです。
 	DefaultLyriaModel = "lyria-3-pro-preview"
-	// DefaultShutdownGrace は、シャットダウン時に処理完了を待つ猶予時間です。
-	DefaultShutdownGrace = 15 * time.Second
-
-	// DefaultHTTPTimeout は、外部サービス呼び出し時のデフォルトHTTPタイムアウトです。
-	DefaultHTTPTimeout = 60 * time.Second
 	// SignedURLExpiration は、生成物の署名付きURLの有効期限です。
 	SignedURLExpiration = 30 * time.Minute
 	// DefaultRateIntervalSec は、音声生成APIの呼び出し間隔（秒）のデフォルト値です。
@@ -38,7 +33,6 @@ type Config struct {
 	GeminiModel         string
 	LyriaModel          string
 	RateInterval        time.Duration
-	ShutdownTimeout     time.Duration
 
 	// OAuth & Session Settings
 	GoogleClientID     string
@@ -73,7 +67,6 @@ func LoadConfig() *Config {
 		GeminiAPIKey:        getEnv("GEMINI_API_KEY", ""),
 		GeminiModel:         getEnv("GEMINI_MODEL", DefaultGeminiModel),
 		LyriaModel:          getEnv("LYRIA_MODEL", DefaultLyriaModel),
-		ShutdownTimeout:     DefaultShutdownGrace,
 
 		// OAuth & Session
 		GoogleClientID:     getEnv("GOOGLE_CLIENT_ID", ""),

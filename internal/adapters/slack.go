@@ -27,7 +27,7 @@ type SlackAdapter struct {
 
 // NewSlackAdapter は新しいアダプターインスタンスを作成します。
 // webhookURL が空の場合、go-notify 側が無効な Notifier を返すため送信は行われません。
-func NewSlackAdapter(httpClient httpkit.Requester, webhookURL, serviceURL string) (*SlackAdapter, error) {
+func NewSlackAdapter(httpClient httpkit.Poster, webhookURL, serviceURL string) (*SlackAdapter, error) {
 	notifier, err := slack.NewNotifier(httpClient, webhookURL)
 	if err != nil {
 		return nil, fmt.Errorf("slackクライアントの初期化に失敗しました: %w", err)
