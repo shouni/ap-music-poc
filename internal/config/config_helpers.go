@@ -45,8 +45,8 @@ func (c *Config) ValidateEssentialConfig() error {
 		return fmt.Errorf("本番環境では SERVICE_URL ('%s') は HTTPS である必要があります", c.ServiceURL)
 	}
 
-	if c.GoogleClientID == "" || c.GoogleClientSecret == "" || c.SessionSecret == "" {
-		return fmt.Errorf("google OAuth 関連の設定（ClientID, ClientSecret, SessionSecret）が不足しています")
+	if c.GoogleClientID == "" || c.GoogleClientSecret == "" {
+		return fmt.Errorf("google OAuth 関連の設定（ClientID, ClientSecret）が不足しています")
 	}
 
 	if len(c.AllowedEmails) == 0 && len(c.AllowedDomains) == 0 {
@@ -67,16 +67,6 @@ func (c *Config) ValidateEssentialConfig() error {
 	}
 	if c.GCSBucket == "" {
 		return fmt.Errorf("GCS_MUSIC_BUCKET が設定されていません")
-	}
-
-	if c.SessionEncryptKey == "" {
-		return fmt.Errorf("SESSION_ENCRYPT_KEY が設定されていません。セキュアな運用のために必須です")
-	}
-
-	// SessionEncryptKey の長さチェック (AES要件: 16, 24, 32 bytes)
-	keyLen := len(c.SessionEncryptKey)
-	if keyLen != 16 && keyLen != 24 && keyLen != 32 {
-		return fmt.Errorf("SESSION_ENCRYPT_KEY の長さが不正です (%d バイト)。16, 24, 32 バイトのいずれかにしてください", keyLen)
 	}
 
 	return nil

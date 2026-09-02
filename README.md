@@ -19,6 +19,10 @@
 - モデルごとの細かな制御
 - 運用環境の具体設定
 - 検証・改善フロー
+- **ログインセッションの保存先** — `session.NewMemoryStore` を使っています。
+  プロセス内に持つので、インスタンスが替わると利用者はログアウトされます。
+  デプロイしない PoC だから成立する選択で、実運用では
+  `session.NewFirestoreStore` を使ってください（セッション鍵は不要です）。
 
 ---
 
@@ -228,8 +232,6 @@ Generate from Recipeフォームでは次の項目を受け付けます。
 | `SLACK_WEBHOOK_URL` | 任意 | 完了・エラー通知先Webhook URL |
 | `GOOGLE_CLIENT_ID` | 必須 | Google OAuth Client ID |
 | `GOOGLE_CLIENT_SECRET` | 必須 | Google OAuth Client Secret |
-| `SESSION_SECRET` | 必須 | セッション署名キー |
-| `SESSION_ENCRYPT_KEY` | 必須 | セッション暗号化キー。16 / 24 / 32 バイト |
 | `ALLOWED_EMAILS` | 条件付き必須 | ログイン許可メールアドレス一覧（カンマ区切り） |
 | `ALLOWED_DOMAINS` | 条件付き必須 | ログイン許可ドメイン一覧（カンマ区切り） |
 

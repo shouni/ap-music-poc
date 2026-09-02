@@ -72,14 +72,13 @@ func createAuthHandler(cfg *config.Config) (*session.Handler, error) {
 	}
 
 	return session.New(session.Config{
-		ClientID:          cfg.GoogleClientID,
-		ClientSecret:      cfg.GoogleClientSecret,
-		RedirectURL:       redirectURL,
-		SessionAuthKey:    cfg.SessionSecret,
-		SessionEncryptKey: cfg.SessionEncryptKey,
-		SessionName:       defaultSessionName,
-		IsSecureCookie:    cfg.IsSecureServiceURL(),
-		AllowedEmails:     cfg.AllowedEmails,
-		AllowedDomains:    cfg.AllowedDomains,
+		ClientID:       cfg.GoogleClientID,
+		ClientSecret:   cfg.GoogleClientSecret,
+		RedirectURL:    redirectURL,
+		SessionName:    defaultSessionName,
+		Store:          session.NewMemoryStore(session.StoreConfig{Secure: cfg.IsSecureServiceURL()}),
+		IsSecureCookie: cfg.IsSecureServiceURL(),
+		AllowedEmails:  cfg.AllowedEmails,
+		AllowedDomains: cfg.AllowedDomains,
 	})
 }

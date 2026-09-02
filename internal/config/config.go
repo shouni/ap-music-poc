@@ -37,10 +37,6 @@ type Config struct {
 	// OAuth & Session Settings
 	GoogleClientID     string
 	GoogleClientSecret string
-	// SessionSecret はセッションデータのHMAC署名用シークレットキーです。
-	SessionSecret string
-	// SessionEncryptKey はセッションデータのAES暗号化用シークレットキーです。 16, 24, 32 バイトのいずれかである必要があります。
-	SessionEncryptKey string
 
 	// Authz Settings
 	AllowedEmails  []string
@@ -71,8 +67,6 @@ func LoadConfig() *Config {
 		// OAuth & Session
 		GoogleClientID:     getEnv("GOOGLE_CLIENT_ID", ""),
 		GoogleClientSecret: getEnv("GOOGLE_CLIENT_SECRET", ""),
-		SessionSecret:      getEnv("SESSION_SECRET", ""),
-		SessionEncryptKey:  getEnv("SESSION_ENCRYPT_KEY", ""),
 
 		AllowedEmails:  parseCommaSeparatedList(allowedEmails),
 		AllowedDomains: parseCommaSeparatedList(allowedDomains),
