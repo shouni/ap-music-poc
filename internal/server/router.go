@@ -45,10 +45,7 @@ func setupRoutes(r chi.Router, h *builder.AppHandlers) {
 
 	// --- 2. 認証関連エンドポイント (OAuth2 フロー) ---
 	if h.Auth != nil {
-		r.Route("/auth", func(r chi.Router) {
-			r.Get("/login", h.Auth.Login)
-			r.Get("/callback", h.Auth.Callback)
-		})
+		r.Handle("/auth/*", h.Auth.Routes()) // login / callback / logout
 	}
 
 	// --- 3. 認証が必要なルート (Web UI 用) ---

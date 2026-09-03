@@ -6,7 +6,7 @@ require (
 	github.com/go-chi/chi/v5 v5.3.2
 	github.com/google/uuid v1.6.0
 	github.com/jellydator/ttlcache/v3 v3.4.1
-	github.com/shouni/gcp-kit v1.15.0
+	github.com/shouni/gcp-kit v1.16.0
 	github.com/shouni/go-gemini-client v1.21.4
 	github.com/shouni/go-http-kit v1.11.0
 	github.com/shouni/go-notify v1.4.0
