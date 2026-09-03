@@ -2,7 +2,6 @@ package builder
 
 import (
 	"fmt"
-	"net/url"
 
 	"github.com/shouni/gcp-kit/auth/oidc"
 	"github.com/shouni/gcp-kit/auth/session"
@@ -50,9 +49,9 @@ func BuildHandlers(
 	// 3. 非同期ワーカー用Handlerの初期化
 	// audience と許可する呼び出し元 SA が揃わないと検証は必ず失敗する（fail-closed）ため、
 	// 構成の不足は起動時に落とします。
-	taskAuth := oidc.New(appCtx.Config.TaskAudienceURL, []string{appCtx.Config.ServiceAccountEmail})
-	if !taskAuth.Configured() {
-		return nil, fmt.Errorf("cloud Tasks の OIDC 検証を構成できません: TASK_AUDIENCE_URL と SERVICE_ACCOUNT_EMAIL が必要です")
+	taskAuth, err := oidc.New(appCtx.Config.TaskAudienceURL, []string{appCtx.Config.ServiceAccountEmail})
+	if err != nil {
+		return nil, fmt.Errorf("cloud Tasks の OIDC 検証を構成できません: TASK_AUDIENCE_URL と SERVICE_ACCOUNT_EMAIL が必要です: %w", err)
 	}
 	workerHandler := worker.NewHandler[domain.Task](appCtx.Pipeline)
 
@@ -66,20 +65,13 @@ func BuildHandlers(
 
 // createAuthHandler は、認証ハンドラーを初期化して返します。
 func createAuthHandler(cfg *config.Config) (*session.Handler, error) {
-	redirectURL, err := url.JoinPath(cfg.ServiceURL, "/auth/callback")
-	if err != nil {
-		return nil, fmt.Errorf("リダイレクトURLの構築に失敗しました: %w", err)
-	}
-
 	return session.New(session.Config{
-		ClientID:          cfg.GoogleClientID,
-		ClientSecret:      cfg.GoogleClientSecret,
-		RedirectURL:       redirectURL,
-		SessionAuthKey:    cfg.SessionSecret,
-		SessionEncryptKey: cfg.SessionEncryptKey,
-		SessionName:       defaultSessionName,
-		IsSecureCookie:    cfg.IsSecureServiceURL(),
-		AllowedEmails:     cfg.AllowedEmails,
-		AllowedDomains:    cfg.AllowedDomains,
+		ClientID:       cfg.GoogleClientID,
+		ClientSecret:   cfg.GoogleClientSecret,
+		ServiceURL:     cfg.ServiceURL,
+		SessionName:    defaultSessionName,
+		Store:          session.NewMemoryStore(),
+		AllowedEmails:  cfg.AllowedEmails,
+		AllowedDomains: cfg.AllowedDomains,
 	})
 }
