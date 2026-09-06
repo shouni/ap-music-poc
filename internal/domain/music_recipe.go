@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/shouni/go-gemini-client/music"
+	"github.com/shouni/genai-kit/music"
 )
 
-// 楽曲設計図の型は go-gemini-client の葉パッケージ music が持ちます。
+// 楽曲設計図の型は genai-kit の葉パッケージ music が持ちます。
 // 独自定義を持っていた頃は、JSON タグまで一致する同型を 2 つ抱え、その間を
 // アダプターの手写しマッパで往復していました。フィールドが片方にだけ増えると
 // 黙って落ちる形だったので、別名にして変換そのものを無くしています。
