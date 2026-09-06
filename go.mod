@@ -6,14 +6,14 @@ require (
 	github.com/go-chi/chi/v5 v5.3.2
 	github.com/google/uuid v1.6.0
 	github.com/jellydator/ttlcache/v3 v3.4.1
-	github.com/shouni/gcp-kit v1.17.0
-	github.com/shouni/genai-kit v1.1.1
+	github.com/shouni/gcp-kit v1.17.1
+	github.com/shouni/genai-kit v1.2.0
 	github.com/shouni/go-http-kit v1.11.0
 	github.com/shouni/go-notify v1.4.0
 	github.com/shouni/go-prompt-kit v1.7.0
-	github.com/shouni/go-remote-io v1.11.2
+	github.com/shouni/go-remote-io v1.11.3
 	github.com/shouni/go-utils v1.7.1
-	github.com/shouni/go-web-reader v1.5.1
+	github.com/shouni/go-web-reader v1.5.2
 	github.com/shouni/netarmor v1.4.0
 	github.com/stretchr/testify v1.12.1
 	golang.org/x/sync v0.22.0

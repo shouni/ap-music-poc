@@ -1,10 +1,19 @@
 # 🎼 AP Music Poc
 
 [![CI](https://github.com/shouni/ap-music-poc/actions/workflows/ci.yml/badge.svg)](https://github.com/shouni/ap-music-poc/actions/workflows/ci.yml)
-[![Status](https://img.shields.io/badge/Status-PoC%20%2F%20Technical%20Demo-blue)](#)
+[![Status](https://img.shields.io/badge/Status-Archived%20%2F%20Technical%20Demo-lightgrey)](#)
 [![Language](https://img.shields.io/badge/Language-Go-blue)](https://go.dev/)
 [![Platform](https://img.shields.io/badge/Platform-Cloud%20Run-blue?logo=google-cloud)](https://cloud.google.com/run)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+> [!NOTE]
+> **このリポジトリはアーカイブされました。読むためのものとして、そのまま残しています。**
+>
+> 放棄ではなく、**特定時点のスナップショットとして意図的に凍結**したものです。設計を示すことが
+> 目的の PoC なので、依存ライブラリの更新に追従し続ける理由がありません。凍結時点で
+> 直接依存はすべて最新に揃えてあり、ビルドとテストは通っています。
+>
+> コードはこれまでどおり閲覧できます。止まるのは push / Issue / PR だけです。
 
 ## 🚀 概要 (About)
 
