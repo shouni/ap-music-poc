@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/shouni/go-gemini-client/lyria"
+	"github.com/shouni/genai-kit/lyria"
 )
 
 type lyriaAudioPromptBuilder struct{}
@@ -14,8 +14,8 @@ func NewDefaultLyriaAudioPromptBuilder() lyria.AudioPromptBuilder {
 	return lyriaAudioPromptBuilder{}
 }
 
-// BuildFullSong は、MusicRecipe 全体を 1 回の Lyria 呼び出しで生成するためのプロンプトを組み立てます。
-func (lyriaAudioPromptBuilder) BuildFullSong(recipe *lyria.MusicRecipe) string {
+// FullSongPrompt は、MusicRecipe 全体を 1 回の Lyria 呼び出しで生成するためのプロンプトを組み立てます。
+func (lyriaAudioPromptBuilder) FullSongPrompt(recipe *lyria.MusicRecipe) string {
 	var pb strings.Builder
 	pb.WriteString("Task: Generate a full song from the provided music recipe.\n")
 	pb.WriteString(buildLyriaSongContext(recipe))

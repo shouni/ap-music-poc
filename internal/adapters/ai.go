@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/shouni/go-gemini-client/gemini"
+	"github.com/shouni/genai-kit/gemini"
 
 	"github.com/shouni/ap-music-poc/internal/config"
 )
@@ -32,7 +32,7 @@ func NewGeminiAIAdapter(ctx context.Context, cfg *config.Config) (*gemini.Client
 		InitialDelay: defaultInitialDelay,
 	}
 
-	aiClient, err := gemini.NewClient(ctx, clientConfig)
+	aiClient, err := gemini.New(ctx, clientConfig)
 	if err != nil {
 		return nil, fmt.Errorf("gemini API クライアントの初期化に失敗しました: %w", err)
 	}
@@ -52,7 +52,7 @@ func NewVertexAIAdapter(ctx context.Context, cfg *config.Config) (*gemini.Client
 		InitialDelay: defaultVertexInitialDelay,
 	}
 
-	aiClient, err := gemini.NewClient(ctx, clientConfig)
+	aiClient, err := gemini.New(ctx, clientConfig)
 	if err != nil {
 		return nil, fmt.Errorf("vertex AI クライアントの初期化に失敗しました: %w", err)
 	}

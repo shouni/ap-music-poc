@@ -66,8 +66,8 @@ func NewPromptAdapter() (*PromptAdapter, error) {
 	}, nil
 }
 
-// GenerateLyrics は歌詞生成用プロンプトを返します。
-func (pa *PromptAdapter) GenerateLyrics(mode string, content string) (string, error) {
+// LyricsPrompt は歌詞生成用プロンプトを返します。
+func (pa *PromptAdapter) LyricsPrompt(mode string, content string) (string, error) {
 	draft := domain.LyricsDraft{
 		Title:     "楽曲のタイトル",
 		Theme:     "世界観の核",
@@ -103,8 +103,8 @@ func (pa *PromptAdapter) GenerateLyrics(mode string, content string) (string, er
 	return prompt, nil
 }
 
-// GenerateRecipe はレシピ生成用プロンプトを返します。
-func (pa *PromptAdapter) GenerateRecipe(mode string, lyrics *domain.LyricsDraft) (string, error) {
+// RecipePrompt はレシピ生成用プロンプトを返します。
+func (pa *PromptAdapter) RecipePrompt(mode string, lyrics *domain.LyricsDraft) (string, error) {
 	recipeTemplate := domain.MusicRecipe{
 		Title:       "楽曲のタイトル",
 		Theme:       "楽曲のコンセプト",

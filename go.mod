@@ -7,7 +7,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/jellydator/ttlcache/v3 v3.4.1
 	github.com/shouni/gcp-kit v1.17.0
-	github.com/shouni/go-gemini-client v1.21.4
+	github.com/shouni/genai-kit v1.1.1
 	github.com/shouni/go-http-kit v1.11.0
 	github.com/shouni/go-notify v1.4.0
 	github.com/shouni/go-prompt-kit v1.7.0

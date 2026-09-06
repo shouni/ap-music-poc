@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 
-	"github.com/shouni/go-gemini-client/gemini"
-	"github.com/shouni/go-gemini-client/lyria"
+	"github.com/shouni/genai-kit/gemini"
+	"github.com/shouni/genai-kit/lyria"
 
 	"github.com/shouni/ap-music-poc/internal/config"
 	"github.com/shouni/ap-music-poc/internal/domain"
@@ -13,7 +13,7 @@ import (
 
 // LyriaAdapter は domain と lyria の境界アダプターです。
 //
-// 楽曲設計図の型は domain 側が go-gemini-client の music パッケージを別名にしているため、
+// 楽曲設計図の型は domain 側が genai-kit の music パッケージを別名にしているため、
 // レシピ・歌詞・AIModels の変換は要りません。残る変換は収集コンテンツだけです。
 type LyriaAdapter struct {
 	core *lyria.Workflow
@@ -65,12 +65,12 @@ func (a *LyriaAdapter) Run(ctx context.Context, task domain.Task, input *domain.
 		images = content.Images
 	}
 
-	audio, err := a.core.GenerateAudio(ctx, recipe, images)
+	track, err := a.core.GenerateAudio(ctx, recipe, images)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	return recipe, audio, nil
+	return recipe, track.Audio, nil
 }
 
 // GenerateLyrics は収集済みコンテンツから歌詞ドラフトを生成します。
@@ -84,8 +84,17 @@ func (a *LyriaAdapter) Compose(ctx context.Context, ai domain.AIModels, lyrics *
 }
 
 // GenerateAudio は MusicRecipe から音声データを生成します。
+//
+// lyria.Track は MIME type と Lyria が返す譜面テキストも持ちますが、この POC は
+// 保存先の拡張子を domain.AudioFileExtension で固定しているため、音声バイト列だけを
+// 返します。必要になったら domain 側の戻り値を広げてください。
 func (a *LyriaAdapter) GenerateAudio(ctx context.Context, recipe *domain.MusicRecipe, images []domain.ImagePayload) ([]byte, error) {
-	return a.core.GenerateAudio(ctx, recipe, toLyriaImagePayloads(images))
+	track, err := a.core.GenerateAudio(ctx, recipe, toLyriaImagePayloads(images))
+	if err != nil {
+		return nil, err
+	}
+
+	return track.Audio, nil
 }
 
 func toLyriaCollectedContent(input *domain.CollectedContent) *lyria.CollectedContent {
